@@ -741,8 +741,10 @@ Rules:
         }
 
     try:
+        AI_MODEL = os.getenv("AI_MODEL", "llama3.2:3b")
+
         response = ollama.chat(
-            model="llama3.2:3b",
+            model=AI_MODEL,
             messages=[
                 {
                     "role": "user",
