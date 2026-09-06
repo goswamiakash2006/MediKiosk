@@ -11,13 +11,18 @@ from database import engine, SessionLocal
 
 import json
 
-import pytesseract
 from PIL import Image
 import io
 
 import ollama
 
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+import os
+import pytesseract
+
+tesseract_path = os.getenv("TESSERACT_CMD")
+
+if tesseract_path:
+    pytesseract.pytesseract.tesseract_cmd = tesseract_path
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -737,7 +742,7 @@ Rules:
 
     try:
         response = ollama.chat(
-            model="llama3",
+            model="llama3.2:3b",
             messages=[
                 {
                     "role": "user",
