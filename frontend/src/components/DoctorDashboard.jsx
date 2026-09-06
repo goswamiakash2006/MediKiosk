@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import API_BASE_URL from "../api";
 
 function DoctorDashboard() {
   const [cases, setCases] = useState([]);
@@ -16,7 +17,7 @@ function DoctorDashboard() {
     const fetchCases = async () => {
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/cases"
+          `${API_BASE_URL}/cases`
         );
 
         const data = await response.json();
@@ -58,7 +59,7 @@ function DoctorDashboard() {
 
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/cases/${selectedCaseId}/summary`
+          `${API_BASE_URL}/cases/${selectedCaseId}/summary`
         );
 
         const data = await response.json();
@@ -92,7 +93,7 @@ function DoctorDashboard() {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/cases/${selectedCaseId}/review`,
+        `${API_BASE_URL}/cases/${selectedCaseId}/review`,
         {
           method: "POST",
         }

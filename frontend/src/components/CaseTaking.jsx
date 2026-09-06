@@ -4,6 +4,7 @@ import ayushQuestions from "../data/ayushQuestions";
 import translations from "../data/translations";
 import detectComplaint from "../utils/complaintDetector";
 import detectRedFlags from "../utils/redFlagDetector";
+import API_BASE_URL from "../api";
 
 function CaseTaking({
   patientId,
@@ -171,7 +172,7 @@ function CaseTaking({
       );
 
     const response = await fetch(
-      "http://127.0.0.1:8000/cases/complete",
+      `${API_BASE_URL}/cases/complete`,
       {
         method: "POST",
 
@@ -303,7 +304,7 @@ function CaseTaking({
 
 
       const response = await fetch(
-        "http://127.0.0.1:8000/ai/next-question",
+        `${API_BASE_URL}/ai/next-question`,
         {
           method: "POST",
 

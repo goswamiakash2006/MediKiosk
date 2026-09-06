@@ -1,4 +1,5 @@
 import { useState } from "react";
+import API_BASE_URL from "../api";
 
 function DocumentUpload({ caseId, onComplete }) {
   const [file, setFile] = useState(null);
@@ -30,7 +31,7 @@ function DocumentUpload({ caseId, onComplete }) {
       formData.append("file", file);
 
       const response = await fetch(
-        `http://127.0.0.1:8000/cases/${caseId}/documents`,
+        `${API_BASE_URL}/cases/${selectedCaseId}/documents`,
         {
           method: "POST",
           body: formData,

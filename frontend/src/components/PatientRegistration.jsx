@@ -1,4 +1,5 @@
 import React from "react";
+import API_BASE_URL from "../api";
 
 function PatientRegistration({ language, onRegistered }) {
   const [patient, setPatient] = React.useState({
@@ -32,7 +33,7 @@ function PatientRegistration({ language, onRegistered }) {
       setLoading(true);
 
       const response = await fetch(
-        "http://127.0.0.1:8000/patients",
+        `${API_BASE_URL}/patients`,
         {
           method: "POST",
           headers: {
