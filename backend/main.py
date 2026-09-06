@@ -4,6 +4,8 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from datetime import datetime
 
+from openai import OpenAI
+
 from summary_engine import generate_clinical_summary
 
 import models
@@ -19,12 +21,24 @@ import ollama
 import os
 import pytesseract
 
+AI_PROVIDER = os.getenv("AI_PROVIDER", "ollama")
+AI_MODEL = os.getenv("AI_MODEL", "llama3.2:3b")
+
+openai_client = None
+
+if AI_PROVIDER == "openai":
+    openai_client = OpenAI(
+        api_key=os.getenv("OPENAI_API_KEY")
+    )
+
 tesseract_path = os.getenv("TESSERACT_CMD")
 
 if tesseract_path:
     pytesseract.pytesseract.tesseract_cmd = tesseract_path
 
 models.Base.metadata.create_all(bind=engine)
+
+
 
 app = FastAPI()
 app.add_middleware(
@@ -743,17 +757,44 @@ Rules:
     try:
         AI_MODEL = os.getenv("AI_MODEL", "llama3.2:3b")
 
-        response = ollama.chat(
-            model=AI_MODEL,
+        if AI_PROVIDER == "ollama":
+            response = ollama.chat(
+                model=AI_MODEL,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
+            )
+
+            raw_response = response["message"]["content"]
+
+        elif AI_PROVIDER == "openai":
+            response = openai_client.chat.completions.create(
+                model=AI_MODEL,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
+                temperature=0.2
+            )
+
+            raw_response = response.choices[0].message.content
+
+        else:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Unsupported AI provider: {AI_PROVIDER}"
+            )
             messages=[
                 {
                     "role": "user",
                     "content": prompt
                 }
             ]
-        )
-
-        raw_response = response["message"]["content"].strip()
 
         print("========== OLLAMA RESPONSE ==========")
         print(raw_response)
